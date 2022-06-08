@@ -1,31 +1,110 @@
-﻿@{
+﻿@model IEnumerable<NguyenTanChon_BigSchool.Models.Course>
+@{
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+<div class="row container">
+    <ul class="course">
+        @foreach (var course in Model)
+        {
+    <li>
+        <div class="date">
+            <div class="month">
+                @course.DateTime.ToString("MM")
+            </div>
+            <div class="day">
+                @course.DateTime.ToString("dd")
+            </div>
+        </div>
+        <div class="details">
+            <span class="lecture">
+                @course.Name
+                @if (course.IsLogin)
+                {
+                    if (course.IsShowFollow)
+                    {
+    <button data-user-id="@course.LecturerId" class="btn btn-default btn-sm js-tongle-follow">Follow</button> }
+                        else
+                        {
+    <button data-user-id="@course.LecturerId" class="btn btn-success btn-sm js-tongle-follow">Following</button>}
+                    }
+            </span>
+            <br />
+            <span class="category">
+                @course.Category.Name
+                @if (course.IsLogin)
+                {
+                    if (course.IsShowGoing)
+                    {
+    <button data-course-id="@course.Id" class="btn btn-default btn-sm js-tongle-attendence">Going?</button> }
+                        else
+                        {
+    <button data-course-id="@course.Id" class="btn btn-info btn-sm js-tongle-attendence">Going</button>}
+                    }
+            </span>
+            @*<span>
+                <button data-course-id="@course.Id" class="btn btn-info btn-sm js-tongle-attendance">Going</button>
+            </span>*@
+        </div>
+    </li>}
+    </ul>
+    @section scripts{
+        <script>
+            $(document).ready(function () {
+                $(".js-tongle-attendence").click(function (e) {
+                    var button = $(e.target);
+                    $.post("/api/attendences", { Id: button.attr("data-course-id") })
+                        .done(function (result) {
+                            if (result == "cancel") {
+                                alert("Register course sucessfully!")
+                                button
+                                    .removeClass("btn-default")
+                                    .addClass("btn-info")
+                                    .text("Going");
+                            } else {
+                                alert("Register course sucessfully!")
+                                button
+                                    .removeClass("btn-default")
+                                    .addClass("btn-info")
+                                    .text("Going");
+                            }
+                            
+                        }).fail(function () {
+                            alert("something fail");
+                        });
+                });
+                $(".js-tongle-follow").click(function (e) {
+                    var button = $(e.target);
+                    var followee = button.attr("data-user-id");
+                    $.post("/api/follow", {
+                        FolloweeId: button.attr("data-user-id")
+                    })
+                        .done(function (result) {
+                            if (result == "cancel") {
+                                $('.js-tongle-follow').each(function (i, obj) {
+                                    if ($(this).attr('data-user-id') == followee) {
+                                        $(this).removeClass("btn-success")
+                                            .addClass("btn-default")
+                                            .text("Follow");
+                                    }
+                                });
+                                alert("unFollow sucessfully")
+                            }
+                            else {
+                                $('.js-tongle-follow').each(function (i, obj) {
+                                    if ($(this).attr('data-user-id') == followee) {
+                                        $(this).removeClass("btn-default")
+                                            .addClass("btn-success")
+                                            .text("Following");
+                                    }
+                                });
+                                alert("Follow sucessfully")
+                            }
+                        }).fail(function () {
+                            alert("Something fail");
+                        });
+                });
+            });
+        </script>
+        }
 </div>

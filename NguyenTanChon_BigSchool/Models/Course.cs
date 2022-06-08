@@ -9,7 +9,12 @@ namespace NguyenTanChon_BigSchool.Models
     [Table("Course")]
     public partial class Course
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Course()
+        {
+            Attendences = new HashSet<Attendence>();
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -24,6 +29,16 @@ namespace NguyenTanChon_BigSchool.Models
 
         public int CategoryId { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Attendence> Attendences { get; set; }
         public List<Category> ListCategory = new List<Category>();
+        public String Name;
+        public string LectureName;
+
+        public bool IsLogin = false;
+        public bool IsShowGoing = false;
+        public bool IsShowFollow = false;
+        public virtual Category Category { get; set; }
+        
     }
 }
