@@ -68,6 +68,15 @@ namespace NguyenTanChon_BigSchool.Controllers
             }
             return View(courses);
         }
+        public ActionResult DeleteMine(int Id)
+        {
+            BigSchoolContext context = new BigSchoolContext();
+            var courses = context.Courses.Find(Id);
+            context.Courses.Remove(courses);
+            context.SaveChanges();
+            return RedirectToAction("ListMine");
+            //return BadRequest("the attendance already exists");
+        }
         public ActionResult LectureIamGoing()
         {
             ApplicationUser currentUser =
