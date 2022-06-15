@@ -75,7 +75,6 @@ namespace NguyenTanChon_BigSchool.Controllers
             context.Courses.Remove(courses);
             context.SaveChanges();
             return RedirectToAction("ListMine");
-            //return BadRequest("the attendance already exists");
         }
         public ActionResult LectureIamGoing()
         {
